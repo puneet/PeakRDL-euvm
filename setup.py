@@ -5,7 +5,7 @@ with open("README.md", "r", encoding='utf-8') as fh:
     long_description = fh.read()
 
 
-with open(os.path.join("src/peakrdl_uvm", "__about__.py"), encoding='utf-8') as f:
+with open(os.path.join("src/peakrdl_euvm", "__about__.py"), encoding='utf-8') as f:
     v_dict = {}
     exec(f.read(), v_dict)
     version = v_dict['__version__']
@@ -20,7 +20,7 @@ setuptools.setup(
     url="https://github.com/coverify/PeakRDL-euvm",
     package_dir={'': 'src'},
     packages=[
-        'peakrdl_uvm',
+        'peakrdl_euvm',
     ],
     include_package_data=True,
     install_requires=[
