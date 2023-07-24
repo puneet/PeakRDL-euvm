@@ -1,4 +1,4 @@
-{% import 'utils.sv' as utils with context %}
+{% import 'utils.d' as utils with context %}
 
 //------------------------------------------------------------------------------
 // uvm_reg definition
