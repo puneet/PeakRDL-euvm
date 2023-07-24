@@ -44,7 +44,7 @@ this(string name = "{{get_class_name(node)}}"){
 // build() function
 //------------------------------------------------------------------------------
 {% macro function_build(node) -%}
-void build(){
+void build() {
     {%- for field in node.fields() %}
     {%- if use_uvm_factory %}
     this.{{get_inst_name(field)}} = uvm_vreg_field.type_id.create("{{get_inst_name(field)}}");

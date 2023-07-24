@@ -43,14 +43,14 @@ this(string name = "{{get_class_name(node)}}"){
 // build() function
 //------------------------------------------------------------------------------
 {% macro function_build(node) -%}
-void build(){
+void build() {
     {%- for field in node.fields() %}
     {%- if use_uvm_factory %}
     this.{{get_inst_name(field)}} = uvm_reg_field.type_id.create("{{get_inst_name(field)}}");
     {%- else %}
     this.{{get_inst_name(field)}} = new uvm_reg_field("{{get_inst_name(field)}}");
     {%- endif %}
-    this.{{get_inst_name(field)}}.configure(this, {{field.width}}, {{field.lsb}}, "{{get_field_access(field)}}", {{field.is_volatile|lower}},cast(uvm_reg_data_t) {{"0b%x" % field.get_property('reset', default=0)}}, {{field.get_property('reset') is not none|int}}, 1, 0);
+    this.{{get_inst_name(field)}}.configure(this, {{field.width}}, {{field.lsb}}, "{{get_field_access(field)}}", {{field.is_volatile|lower}},cast(uvm_reg_data_t) {{"0x%x" % field.get_property('reset', default=0)}}, {{field.get_property('reset') is not none|int}}, 1, 0);
     {%- endfor %}
 }
 {%- endmacro %}
@@ -61,17 +61,17 @@ void build(){
 //------------------------------------------------------------------------------
 {% macro build_instance(node) -%}
 {%- if node.is_array %}
-foreach(this.{{get_inst_name(node)}}[{{utils.array_iterator_list(node)}}]) begin
+foreach (uint {{utils.array_iterator_list(node)}}, ref inst; this.{{get_inst_name(node)}}) {
     {%- if use_uvm_factory %}
-    this.{{get_inst_name(node)}}{{utils.array_iterator_suffix(node)}} = {{get_class_name(node)}}.type_id.create(format("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
+    inst = {{get_class_name(node)}}.type_id.create(format("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
     {%- else %}
-    this.{{get_inst_name(node)}}{{utils.array_iterator_suffix(node)}} = new {{get_class_name(node)}}(format("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
+    inst = new {{get_class_name(node)}}(format("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
     {%- endif %}
-    this.{{get_inst_name(node)}}{{utils.array_iterator_suffix(node)}}.configure(this);
+    inst.configure(this);
     {{add_hdl_path_slices(node, get_inst_name(node) + utils.array_iterator_suffix(node))|trim|indent}}
-    this.{{get_inst_name(node)}}{{utils.array_iterator_suffix(node)}}.build();
-    this.default_map.add_reg(this.{{get_inst_name(node)}}{{utils.array_iterator_suffix(node)}}, {{get_array_address_offset_expr(node)}});
-end
+    inst.build();
+    this.default_map.add_reg(inst, {{get_array_address_offset_expr(node)}});
+}
 {%- else %}
 {%- if use_uvm_factory %}
 this.{{get_inst_name(node)}} = {{get_class_name(node)}}.type_id.create("{{get_inst_name(node)}}");

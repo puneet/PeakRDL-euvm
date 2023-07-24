@@ -61,16 +61,16 @@ void build(){
 //------------------------------------------------------------------------------
 {% macro build_instance(node) -%}
 {%- if node.is_array %}
-foreach(this.{{get_inst_name(node)}}[{{utils.array_iterator_list(node)}}]) begin
+foreach (uint {{utils.array_iterator_list(node)}}, ref inst; this.{{get_inst_name(node)}}) {
     {%- if use_uvm_factory %}
-    this.{{get_inst_name(node)}}{{utils.array_iterator_suffix(node)}} = {{get_class_name(node)}}.type_id.create($sformatf("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
+    inst = {{get_class_name(node)}}.type_id.create(format("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
     {%- else %}
-    this.{{get_inst_name(node)}}{{utils.array_iterator_suffix(node)}} = new {{get_class_name(node)}}(format("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
+    inst = new {{get_class_name(node)}}(format("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
     {%- endif %}
-    this.{{get_inst_name(node)}}{{utils.array_iterator_suffix(node)}}.configure(this);
-    this.{{get_inst_name(node)}}{{utils.array_iterator_suffix(node)}}.build();
-    this.default_map.add_submap(this.{{get_inst_name(node)}}{{utils.array_iterator_suffix(node)}}.default_map, {{get_array_address_offset_expr(node)}});
-end
+    inst.configure(this);
+    inst.build();
+    this.default_map.add_submap(inst.default_map, {{get_array_address_offset_expr(node)}});
+ }
 {%- else %}
 {%- if use_uvm_factory %}
 this.{{get_inst_name(node)}} = {{get_class_name(node)}}.type_id.create("{{get_inst_name(node)}}");
