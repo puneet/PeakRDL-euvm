@@ -395,13 +395,13 @@ class eUVMExporter:
         results in:
             X + i0*B*C*D*Y + i1*C*D*Y + i2*D*Y + i3*Y
         """
-        s = "'h%x" % node.raw_address_offset
+        s = "0x%x" % node.raw_address_offset
         if node.is_array:
             for i in range(len(node.array_dimensions)):
                 m = node.array_stride
                 for j in range(i+1, len(node.array_dimensions)):
                     m *= node.array_dimensions[j]
-                s += " + i%d*'h%x" % (i, m)
+                s += " + i%d*0x%x" % (i, m)
         return s
 
 
