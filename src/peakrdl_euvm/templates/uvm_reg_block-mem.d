@@ -44,14 +44,14 @@ this(string name = "{{get_class_name(node)}}"){
 // build() function
 //------------------------------------------------------------------------------
 {% macro function_build(node) -%}
-void build(){
-    this.default_map = create_map("reg_map", 0, {{roundup_to(node.get_property('memwidth'), 8) / 8}}, {{get_endianness(node)}});
-    this.m_mem = new {{get_class_name(node)}}("m_mem", {{node.get_property('mementries')}}, {{node.get_property('memwidth')}}, "{{get_mem_access(node)}}");
-    this.m_mem.configure(this);
-    this.default_map.add_mem(this.m_mem, 0);
-    {%- for child in node.children() if isinstance(child, RegNode) -%}
-        {{uvm_vreg.build_instance(child)|indent}}
-    {%- endfor %}
+void build() {
+  this.default_map = create_map("reg_map", 0, {{(roundup_to(node.get_property('memwidth'), 8) / 8)|int}}, {{get_endianness(node)}});
+  this.m_mem = new uvm_mem("m_mem", {{node.get_property('mementries')}}, {{node.get_property('memwidth')}}, "{{get_mem_access(node)}}");
+  this.m_mem.configure(this);
+  this.default_map.add_mem(this.m_mem, 0);
+  {%- for child in node.children() if isinstance(child, RegNode) -%}
+  {{uvm_vreg.build_instance(child)|indent}}
+  {%- endfor %}
 }
 {%- endmacro %}
 
