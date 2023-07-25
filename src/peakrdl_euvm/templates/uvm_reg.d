@@ -33,7 +33,7 @@ class {{get_class_name(node)}}: uvm_reg {
 // new() function
 //------------------------------------------------------------------------------
 {% macro function_new(node) -%}
-this(string name = "{{get_class_name(node)}}"){
+this(string name = "{{get_class_name(node)}}") {
     super(name, {{node.get_property('regwidth')}}, UVM_NO_COVERAGE);
 }
 {%- endmacro %}
@@ -74,7 +74,7 @@ foreach (uint {{utils.array_iterator(loop.index0)}}, ref {{utils.array_element(n
   {{add_hdl_path_slices(node, get_inst_name(node) + utils.array_iterator_suffix(node))|trim|indent}}
   {{utils.array_elements_leaf(node)}}.build();
   this.default_map.add_reg({{utils.array_elements_leaf(node)}}, {{get_array_address_offset_expr(node)}});
- }
+}
 {%- else %}
 {%- if use_uvm_factory %}
 this.{{get_inst_name(node)}} = {{get_class_name(node)}}.type_id.create("{{get_inst_name(node)}}");

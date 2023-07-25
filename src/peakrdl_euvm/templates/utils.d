@@ -6,8 +6,8 @@
 {% macro array_inst_suffix(node) -%}
     {%- if node.is_array -%}
         {%- for dim in node.array_dimensions -%}
-            [{{dim}}]
-        {%- endfor -%}
+[{{dim}}]
+{%- endfor -%}
     {%- endif -%}
 {%- endmacro %}
 

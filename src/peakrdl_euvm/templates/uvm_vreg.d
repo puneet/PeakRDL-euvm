@@ -7,13 +7,13 @@
 {%- if class_needs_definition(node) %}
 // {{get_class_friendly_name(node)}}
 class {{get_class_name(node)}}: uvm_vreg {
-{%- if use_uvm_factory %}
- mixin uvm_object_utils;
-{%- endif %}
-    {{child_insts(node)|indent}}
-    {{function_new(node)|indent}}
+  {%- if use_uvm_factory %}
+  mixin uvm_object_utils;
+  {%- endif %}
+  {{child_insts(node)|indent}}
+  {{function_new(node)|indent}}
 
-    {{function_build(node)|indent}}
+  {{function_build(node)|indent}}
 }
 {% endif -%}
 {%- endmacro %}
@@ -33,8 +33,8 @@ class {{get_class_name(node)}}: uvm_vreg {
 // new() function
 //------------------------------------------------------------------------------
 {% macro function_new(node) -%}
-this(string name = "{{get_class_name(node)}}"){
-    super(name, {{node.get_property('regwidth')}});
+this(string name = "{{get_class_name(node)}}") {
+  super(name, {{node.get_property('regwidth')}});
 }
 {%- endmacro %}
 
@@ -45,14 +45,14 @@ this(string name = "{{get_class_name(node)}}"){
 //------------------------------------------------------------------------------
 {% macro function_build(node) -%}
 void build() {
-    {%- for field in node.fields() %}
-    {%- if use_uvm_factory %}
-    this.{{get_inst_name(field)}} = uvm_vreg_field.type_id.create("{{get_inst_name(field)}}");
-    {%- else %}
-    this.{{get_inst_name(field)}} = new uvm_vreg_field("{{get_inst_name(field)}}");
-    {%- endif %}
-    this.{{get_inst_name(field)}}.configure(this, {{field.width}}, {{field.lsb}});
-    {%- endfor %}
+  {%- for field in node.fields() %}
+  {%- if use_uvm_factory %}
+  this.{{get_inst_name(field)}} = uvm_vreg_field.type_id.create("{{get_inst_name(field)}}");
+  {%- else %}
+  this.{{get_inst_name(field)}} = new uvm_vreg_field("{{get_inst_name(field)}}");
+  {%- endif %}
+  this.{{get_inst_name(field)}}.configure(this, {{field.width}}, {{field.lsb}});
+  {%- endfor %}
 }
 {%- endmacro %}
 

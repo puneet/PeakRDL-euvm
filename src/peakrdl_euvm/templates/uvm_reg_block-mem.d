@@ -7,14 +7,14 @@
 {%- if class_needs_definition(node) %}
 // {{get_class_friendly_name(node)}}
 class {{get_class_name(node)}}: uvm_reg_block {
-{%- if use_uvm_factory %}
- mixin uvm_object_utils;
-{%- endif %}
-    @rand uvm_mem m_mem;
-    {{child_insts(node)|indent}}
-    {{function_new(node)|indent}}
+  {%- if use_uvm_factory %}
+  mixin uvm_object_utils;
+  {%- endif %}
+  @rand uvm_mem m_mem;
+  {{child_insts(node)|indent}}
+  {{function_new(node)|indent}}
 
-    {{function_build(node)|indent}}
+  {{function_build(node)|indent}}
 }
 {% endif -%}
 {%- endmacro %}
@@ -34,8 +34,8 @@ class {{get_class_name(node)}}: uvm_reg_block {
 // new() function
 //------------------------------------------------------------------------------
 {% macro function_new(node) -%}
-this(string name = "{{get_class_name(node)}}"){
-    super(name);
+this(string name = "{{get_class_name(node)}}") {
+  super(name);
 }
 {%- endmacro %}
 
@@ -73,7 +73,7 @@ foreach (uint {{utils.array_iterator(loop.index0)}}, ref {{utils.array_element(n
   {{utils.array_elements_leaf(node)}}.configure(this);
   {{utils.array_elements_leaf(node)}}.build();
   this.default_map.add_submap({{utils.array_elements_leaf(node)}}.default_map, {{get_array_address_offset_expr(node)}});
- }
+}
 {%- else %}
 {%- if use_uvm_factory %}
 this.{{get_inst_name(node)}} = {{get_class_name(node)}}.type_id.create("{{get_inst_name(node)}}");

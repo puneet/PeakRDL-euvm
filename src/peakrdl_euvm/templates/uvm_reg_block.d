@@ -7,13 +7,13 @@
 {%- if class_needs_definition(node) %}
 // {{get_class_friendly_name(node)}}
 class {{get_class_name(node)}}: uvm_reg_block {
-{%- if use_uvm_factory %}
- mixin uvm_object_utils;
-{%- endif %}
-    {{child_insts(node)|indent}}
-    {{function_new(node)|indent}}
+  {%- if use_uvm_factory %}
+  mixin uvm_object_utils;
+  {%- endif %}
+  {{child_insts(node)|indent}}
+  {{function_new(node)|indent}}
 
-    {{function_build(node)|indent}}
+  {{function_build(node)|indent}}
 }
 {% endif -%}
 {%- endmacro %}
@@ -33,8 +33,8 @@ class {{get_class_name(node)}}: uvm_reg_block {
 // new() function
 //------------------------------------------------------------------------------
 {% macro function_new(node) -%}
-this(string name = "{{get_class_name(node)}}"){
-    super(name);
+this(string name = "{{get_class_name(node)}}") {
+  super(name);
 }
 {%- endmacro %}
 
@@ -44,16 +44,16 @@ this(string name = "{{get_class_name(node)}}"){
 //------------------------------------------------------------------------------
 {% macro function_build(node) -%}
 void build() {
-    this.default_map = create_map("reg_map", 0, {{get_bus_width(node)}}, {{get_endianness(node)}});
-    {%- for child in node.children() -%}
-        {%- if isinstance(child, RegNode) -%}
-            {{uvm_reg.build_instance(child)|indent}}
-        {%- elif isinstance(child, (RegfileNode, AddrmapNode)) -%}
-            {{build_instance(child)|indent}}
-        {%- elif isinstance(child, MemNode) -%}
-            {{uvm_reg_block_mem.build_instance(child)|indent}}
-        {%- endif -%}
-    {%- endfor %}
+  this.default_map = create_map("reg_map", 0, {{get_bus_width(node)}}, {{get_endianness(node)}});
+  {%- for child in node.children() -%}
+  {%- if isinstance(child, RegNode) -%}
+  {{uvm_reg.build_instance(child)|indent}}
+  {%- elif isinstance(child, (RegfileNode, AddrmapNode)) -%}
+  {{build_instance(child)|indent}}
+  {%- elif isinstance(child, MemNode) -%}
+  {{uvm_reg_block_mem.build_instance(child)|indent}}
+  {%- endif -%}
+  {%- endfor %}
 }
 {%- endmacro %}
 
