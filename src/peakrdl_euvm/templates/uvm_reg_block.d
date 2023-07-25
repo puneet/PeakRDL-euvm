@@ -63,23 +63,26 @@ void build() {
 //------------------------------------------------------------------------------
 {% macro build_instance(node) -%}
 {%- if node.is_array %}
-foreach (uint {{utils.array_iterator_list(node)}}, ref inst; this.{{get_inst_name(node)}}) {
-    {%- if use_uvm_factory %}
-    inst = {{get_class_name(node)}}.type_id.create(format("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
-    {%- else %}
-    inst = new {{get_class_name(node)}}(format("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
-    {%- endif %}
-    {%- if node.get_property('hdl_path') %}
-    inst.configure(this, "{{node.get_property('hdl_path')}}");
-    {%- else %}
-    inst.configure(this);
-    {%- endif %}
-    {%- if node.get_property('hdl_path_gate') %}
-    inst.add_hdl_path("{{node.get_property('hdl_path_gate')}}", "GATE");
-    {%- endif %}
-    inst.build();
-    this.default_map.add_submap(inst.default_map, {{get_array_address_offset_expr(node)}});
- }
+  {%- for dim in node.array_dimensions %}
+foreach (uint {{utils.array_iterator(loop.index0)}}, ref {{utils.array_element(node, loop.index0)}}; {{utils.array_subarray(node, loop.index0)}})
+  {%- if loop.last %} { {% endif -%}
+  {%- endfor -%}
+  {%- if use_uvm_factory %}
+  {{utils.array_elements_leaf(node)}} = {{get_class_name(node)}}.type_id.create(format("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
+  {%- else %}
+  {{utils.array_elements_leaf(node)}} = new {{get_class_name(node)}}(format("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
+  {%- endif %}
+  {%- if node.get_property('hdl_path') %}
+  {{utils.array_elements_leaf(node)}}.configure(this, "{{node.get_property('hdl_path')}}");
+  {%- else %}
+  {{utils.array_elements_leaf(node)}}.configure(this);
+  {%- endif %}
+  {%- if node.get_property('hdl_path_gate') %}
+  {{utils.array_elements_leaf(node)}}.add_hdl_path("{{node.get_property('hdl_path_gate')}}", "GATE");
+  {%- endif %}
+  {{utils.array_elements_leaf(node)}}.build();
+  this.default_map.add_submap({{utils.array_elements_leaf(node)}}.default_map, {{get_array_address_offset_expr(node)}});
+}
 {%- else %}
 {%- if use_uvm_factory %}
 this.{{get_inst_name(node)}} = {{get_class_name(node)}}.type_id.create("{{get_inst_name(node)}}");

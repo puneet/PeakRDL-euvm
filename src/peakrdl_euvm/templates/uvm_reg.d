@@ -61,17 +61,20 @@ void build() {
 //------------------------------------------------------------------------------
 {% macro build_instance(node) -%}
 {%- if node.is_array %}
-foreach (uint {{utils.array_iterator_list(node)}}, ref inst; this.{{get_inst_name(node)}}) {
-    {%- if use_uvm_factory %}
-    inst = {{get_class_name(node)}}.type_id.create(format("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
-    {%- else %}
-    inst = new {{get_class_name(node)}}(format("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
-    {%- endif %}
-    inst.configure(this);
-    {{add_hdl_path_slices(node, get_inst_name(node) + utils.array_iterator_suffix(node))|trim|indent}}
-    inst.build();
-    this.default_map.add_reg(inst, {{get_array_address_offset_expr(node)}});
-}
+  {%- for dim in node.array_dimensions %}
+foreach (uint {{utils.array_iterator(loop.index0)}}, ref {{utils.array_element(node, loop.index0)}}; {{utils.array_subarray(node, loop.index0)}})
+  {%- if loop.last %} { {% endif -%}
+  {%- endfor -%}
+  {%- if use_uvm_factory %}
+  {{utils.array_elements_leaf(node)}} = {{get_class_name(node)}}.type_id.create(format("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
+  {%- else %}
+  {{utils.array_elements_leaf(node)}} = new {{get_class_name(node)}}(format("{{get_inst_name(node)}}{{utils.array_suffix_format(node)}}", {{utils.array_iterator_list(node)}}));
+  {%- endif %}
+  {{utils.array_elements_leaf(node)}}.configure(this);
+  {{add_hdl_path_slices(node, get_inst_name(node) + utils.array_iterator_suffix(node))|trim|indent}}
+  {{utils.array_elements_leaf(node)}}.build();
+  this.default_map.add_reg({{utils.array_elements_leaf(node)}}, {{get_array_address_offset_expr(node)}});
+ }
 {%- else %}
 {%- if use_uvm_factory %}
 this.{{get_inst_name(node)}} = {{get_class_name(node)}}.type_id.create("{{get_inst_name(node)}}");
