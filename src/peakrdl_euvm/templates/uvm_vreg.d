@@ -39,7 +39,6 @@ this(string name = "{{get_class_name(node)}}") {
 {%- endmacro %}
 
 
-
 //------------------------------------------------------------------------------
 // build() function
 //------------------------------------------------------------------------------
@@ -66,6 +65,6 @@ this.{{get_inst_name(node)}} = {{get_class_name(node)}}.type_id.create("{{get_in
 {%- else %}
 this.{{get_inst_name(node)}} = new {{get_class_name(node)}}("{{get_inst_name(node)}}");
 {%- endif %}
-this.{{get_inst_name(node)}}.configure(this);
+this.{{get_inst_name(node)}}.configure(this, this.m_mem, {{node.n_elements}});
 this.{{get_inst_name(node)}}.build();
 {%- endmacro %}
