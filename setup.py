@@ -23,8 +23,9 @@ setuptools.setup(
         'peakrdl_euvm',
     ],
     include_package_data=True,
+    python_requires='>=3.5.2',
     install_requires=[
-        "systemrdl-compiler>=1.12.0",
+        "systemrdl-compiler >= 1.27.0, < 2",
         "jinja2",
     ],
     entry_points = {
@@ -43,6 +44,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3 :: Only",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
@@ -51,6 +53,7 @@ setuptools.setup(
     ),
     project_urls={
         "Source": "https://github.com/coverify/PeakRDL-euvm",
-        "Tracker": "https://github.com/coverify/PeakRDL-euvm/issues"
+        "Tracker": "https://github.com/coverify/PeakRDL-euvm/issues",
+        "Changelog": "https://github.com/coverify/PeakRDL-euvm/releases",
     },
 )
